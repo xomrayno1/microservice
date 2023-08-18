@@ -1,0 +1,73 @@
+version: "3"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${KAFKA_VERSION:-latest}
+    user: "0:0"
+    hostname: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: "zookeeper:2888:3888"
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok"
+    volumes:
+      - "./volumes/zookeeper/data:/var/lib/zookeeper/data"
+      - "./volumes/zookeeper/transactions:/var/lib/zookeeper/log"
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION:-latest}
+    user: "0:0"
+    hostname: kafka-broker-1
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,LISTENER_LOCAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_COMPRESSION_TYPE: producer
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    volumes:
+      - "./volumes/kafka/broker-1:/var/lib/kafka/data"
+  kafka-manager:
+    image: hlebalbau/kafka-manager
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+
+  init-kafka:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION:-latest}
+    entrypoint: ["/bin/sh", "-c"]
+    depends_on:
+      - zookeeper
+      - kafka-broker-1
+      # - postgres
+    command: |
+      "
+      # block untill kafka is reachable
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+
+      # echo -e 'Deleting kafka topics'
+      #kafka-topics --bootstrap-server kafka-broker-1:9092 --topic create-sale-order --delete --if-exists
+
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic create-sale-order-request --replication-factor 1 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic create-sale-order-response --replication-factor 1 --partitions 3
+
+
+      # echo -e 'Sucessfully created the following topics:'
+      # kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+      "

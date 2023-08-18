@@ -1,0 +1,76 @@
+server:
+  port: 9095
+logging:
+  level:
+    web: DEBUG
+    
+spring:
+  application:
+    name: API-GATEWAY
+  config:
+    import: optional:configserver:${CONFIG_SERVER_ADDRESS:http//localhost:8094}
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      routes:
+      - id: sale-service
+        uri: lb://sale-service
+        predicates:
+          - Path=/api/v1/sale/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: sale-service
+            fallbackUri: forward:/orderServiceFallBack
+      - id: stock-service
+        uri: lb://stock-service
+        predicates:
+          - Path=/api/v1/stock/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: stock-service
+            fallbackUri: forward:/orderServiceFallBack
+      - id: ORDER-SERVICE
+        uri: lb://ORDER-SERVICE
+        predicates:
+          - Path=/orders/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: ORDER-SERVICE
+            fallbackUri: forward:/orderServiceFallBack
+#            statusCodes:
+#              - "METHOD_NOT_ALLOWED"
+#              - 400
+#              - 500
+#              - 405
+#              - "NOT_FOUND"
+      - id: PAYMENT-SERVICE
+        uri: lb://PAYMENT-SERVICE
+        predicates:
+          - Path=/payment/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: PAYMENT-SERVICE
+            fallbackUri: forward:/orderServiceFallBack
+      - id: PRODUCT-SERVICE
+        uri: lb://PRODUCT-SERVICE
+        predicates:
+          - Path=/product/**     
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: PRODUCT-SERVICE
+            fallbackUri: forward:/orderServiceFallBack
+#            
+#eureka:
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+#  instance:
+#    prefer-ip-address: true

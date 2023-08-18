@@ -1,0 +1,22 @@
+{
+  "price": 3109000,
+  "quantity": 2,
+  "totalPrice": 3109000,
+  "discount": 0,
+  "amount": 3109000,
+  "customerName": "string",
+  "customerPhone": "string",
+  "customerAddress": "string",
+  "description": "string",
+  "saleOrderDetails": [
+    {
+      "productId": 1,
+      "productVariantId": 1,
+      "price": 1650000.00,
+      "quantity": 1,
+      "totalPrice": 1650000.00,
+      "discount": 0,
+      "amount": 1650000.00
+    } 
+  ]
+}
