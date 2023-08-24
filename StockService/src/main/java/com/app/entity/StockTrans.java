@@ -2,7 +2,8 @@ package com.app.entity;
 
 import java.time.LocalDateTime;
 
-import com.app.enums.StockTransType;
+import com.core.entity.BaseEntity;
+import com.core.enums.StockTransType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

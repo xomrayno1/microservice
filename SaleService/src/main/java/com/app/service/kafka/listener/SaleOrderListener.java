@@ -4,9 +4,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.enums.OrderStatus;
-import com.app.model.response.DecreaseStockResponse;
 import com.app.service.saga.CreateSaleOrderSaga;
+import com.core.enums.OrderStatus;
+import com.core.model.response.DecreaseStockResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

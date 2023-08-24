@@ -1,6 +1,6 @@
 package com.app.model.event;
 
-import com.app.enums.OrderStatus;
+import com.core.enums.OrderStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

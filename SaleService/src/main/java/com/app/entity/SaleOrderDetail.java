@@ -2,6 +2,7 @@ package com.app.entity;
 
 import java.math.BigDecimal;
 
+import com.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;

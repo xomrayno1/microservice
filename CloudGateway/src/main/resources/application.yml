@@ -65,12 +65,12 @@ spring:
           args:
             name: PRODUCT-SERVICE
             fallbackUri: forward:/orderServiceFallBack
-#            
-#eureka:
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
-#  instance:
-#    prefer-ip-address: true
+     
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true

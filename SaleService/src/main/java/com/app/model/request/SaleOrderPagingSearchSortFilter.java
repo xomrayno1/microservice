@@ -2,7 +2,7 @@ package com.app.model.request;
 
 import java.time.LocalDate;
 
-import com.app.enums.Status;
+import com.core.enums.Status;
 
 import lombok.Getter;
 import lombok.Setter;

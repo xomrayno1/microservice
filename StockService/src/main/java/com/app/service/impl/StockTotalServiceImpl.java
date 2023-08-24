@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.entity.StockTotal;
-import com.app.exception.ValidateException;
-import com.app.model.request.DecreaseStockRequest;
-import com.app.model.response.StockTotalResponse;
 import com.app.repository.StockTotalRepository;
 import com.app.service.StockTotalService;
+import com.core.exception.ValidateException;
+import com.core.model.request.DecreaseStockRequest;
+import com.core.model.response.StockTotalResponse;
 
 import lombok.AllArgsConstructor;
 

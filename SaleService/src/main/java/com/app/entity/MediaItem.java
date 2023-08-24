@@ -1,7 +1,8 @@
 package com.app.entity;
 
-import com.app.enums.MediaObjectType;
-import com.app.enums.MediaType;
+import com.core.entity.BaseEntity;
+import com.core.enums.MediaObjectType;
+import com.core.enums.MediaType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

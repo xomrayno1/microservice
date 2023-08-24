@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.entity.StockTotal;
-import com.app.model.response.APIResponse;
-import com.app.model.response.StockTotalResponse;
 import com.app.service.StockTotalService;
-import com.app.utils.PathUtils;
-import com.app.utils.ResponseUtils;
+import com.core.controller.BaseController;
+import com.core.model.response.APIResponse;
+import com.core.model.response.StockTotalResponse;
+import com.core.utils.PathUtils;
+import com.core.utils.ResponseUtils;
 
 import lombok.AllArgsConstructor;
 

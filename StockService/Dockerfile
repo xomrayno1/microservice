@@ -6,4 +6,4 @@ COPY ${JAR_FILE} StockService.jar
 
 ENTRYPOINT [ "java", "-jar", "/StockService.jar" ]
 
-EXPOSE 9002
+EXPOSE 9003

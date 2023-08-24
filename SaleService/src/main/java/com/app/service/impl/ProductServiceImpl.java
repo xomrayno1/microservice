@@ -13,22 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.entity.Category;
 import com.app.entity.Product;
 import com.app.entity.ProductVariant;
-import com.app.enums.Status;
-import com.app.exception.ValidateException;
 import com.app.model.request.ProductCreateRequest;
 import com.app.model.request.ProductPagingSearchSortFilter;
 import com.app.model.request.ProductUpdateRequest;
 import com.app.model.request.ProductVariantCreateRequest;
-import com.app.model.response.APIResponse;
-import com.app.model.response.APIStatus;
 import com.app.model.response.ProductResponse;
-import com.app.model.response.StockTotalResponse;
 import com.app.repository.CategoryRepository;
 import com.app.repository.ProductRepository;
 import com.app.repository.ProductVariantRepository;
 import com.app.service.ProductService;
 import com.app.service.feign.StockClient;
-import com.app.utils.Commons;
+import com.core.enums.Status;
+import com.core.exception.ValidateException;
+import com.core.model.response.APIResponse;
+import com.core.model.response.APIStatus;
+import com.core.model.response.StockTotalResponse;
+import com.core.utils.Commons;
 
 import lombok.AllArgsConstructor;
 

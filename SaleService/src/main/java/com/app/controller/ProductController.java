@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.entity.Product;
-import com.app.model.request.DeleteRequest;
 import com.app.model.request.ProductCreateRequest;
 import com.app.model.request.ProductPagingSearchSortFilter;
 import com.app.model.request.ProductUpdateRequest;
 import com.app.model.request.ProductVariantCreateRequest;
-import com.app.model.response.APIResponse;
 import com.app.model.response.ProductResponse;
-import com.app.model.response.ResponseSuccessMessage;
 import com.app.service.ProductService;
-import com.app.utils.PathUtils;
-import com.app.utils.ResponseUtils;
+import com.core.model.request.DeleteRequest;
+import com.core.model.response.APIResponse;
+import com.core.model.response.ResponseSuccessMessage;
+import com.core.utils.PathUtils;
+import com.core.utils.ResponseUtils;
 
 import lombok.AllArgsConstructor;
 

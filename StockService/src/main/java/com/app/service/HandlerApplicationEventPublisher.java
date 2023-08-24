@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.app.model.event.CreateSaleOrderResponseEvent;
-import com.app.model.response.DecreaseStockResponse;
 import com.app.service.kafka.publisher.SaleOrderKafkaPublisher;
+import com.core.model.response.DecreaseStockResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -2,6 +2,8 @@ package com.app.entity;
 
 import org.hibernate.annotations.Comment;
 
+import com.core.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

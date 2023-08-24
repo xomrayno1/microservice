@@ -17,12 +17,12 @@ import com.app.entity.Category;
 import com.app.model.request.CategoryCreateRequest;
 import com.app.model.request.CategoryFilter;
 import com.app.model.request.CategoryUpdateRequest;
-import com.app.model.request.DeleteRequest;
-import com.app.model.response.APIResponse;
-import com.app.model.response.ResponseSuccessMessage;
 import com.app.service.CategoryService;
-import com.app.utils.PathUtils;
-import com.app.utils.ResponseUtils;
+import com.core.model.request.DeleteRequest;
+import com.core.model.response.APIResponse;
+import com.core.model.response.ResponseSuccessMessage;
+import com.core.utils.PathUtils;
+import com.core.utils.ResponseUtils;
 
 import lombok.AllArgsConstructor;
 

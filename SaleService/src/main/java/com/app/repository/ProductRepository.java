@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.app.entity.Product;
-import com.app.enums.Status;
+import com.core.enums.Status;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product>, CrudRepository<Product, Long> {
 	

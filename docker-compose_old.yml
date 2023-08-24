@@ -1,0 +1,179 @@
+version: '3'
+networks:
+  my_network_01:
+    driver: bridge
+services:
+  discoveryserver:
+    image: 'discoveryserver:0.0.1'
+    container_name: discoveryserver_container
+    ports:
+      - '8761:8761'
+    networks:
+      - my_network_01
+  configserver:
+    image: 'configserver:0.0.1'
+    container_name: configserver_container
+    ports:
+      - '9001:8094'
+    depends_on:
+      - discoveryserver
+    networks:
+      - my_network_01
+    environment:
+      - EUREKA_SERVER_ADDRESS=http://discoveryserver:8761/eureka
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "f",
+          "http://configserver:8094/actuator/health"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      #start_period: 30s
+  cloudgateway:
+    image: 'cloudgateway:0.0.2'
+    container_name: cloudgateway_container
+    networks:
+      - my_network_01
+    ports:
+      - '8080:9095'
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_ADDRESS=http://discoveryserver:8761/eureka
+      - CONFIG_SERVER_ADDRESS=http://configserver:9001
+  mysql:
+    container_name: mysql_server
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=sale-service'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=root'
+    ports:
+      - '3306:3306'
+    volumes:
+      - "./volumes/mysql/data:/var/lib/mysql"
+      - "./volumes/mysql/config:/etc/mysql/conf.d"
+    networks:
+      - my_network_01
+  SaleService:
+    image: 'sale-service:0.0.5'
+    container_name: saleservice_container
+    ports:
+      - '9002:9004'
+    depends_on:
+      - cloudgateway
+      - mysql
+      - init-kafka
+    networks:
+      - my_network_01
+    environment:
+      - EUREKA_SERVER_ADDRESS=http://discoveryserver:8761/eureka
+      - CONFIG_SERVER_ADDRESS=http://configserver:9001
+      - CONFIG_SERVER_DB_URL=jdbc:mysql://mysql_server/sale-service
+      - CONFIG_SERVER_DB_USERNAME=root
+      - CONFIG_SERVER_DB_PASSWORD=verysecret
+      - CONFIG_SERVER_KAFKA=kafka-broker-1:9092
+  StockService:
+    image: 'stock-service:0.0.3'
+    container_name: stockservice_container
+    networks:
+      - my_network_01
+    ports:
+      - '9003:9004'
+    depends_on:
+      - cloudgateway
+      - mysql
+      - init-kafka
+    environment:
+      - EUREKA_SERVER_ADDRESS=http://discoveryserver:8761/eureka
+      - CONFIG_SERVER_ADDRESS=http://configserver:9001
+      - CONFIG_SERVER_DB_URL=jdbc:mysql://mysql_server/stock-service
+      - CONFIG_SERVER_DB_USERNAME=root
+      - CONFIG_SERVER_DB_PASSWORD=verysecret
+      - CONFIG_SERVER_KAFKA=kafka-broker-1:9092
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${KAFKA_VERSION:-latest}
+    user: "0:0"
+    networks:
+      - my_network_01
+    hostname: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: "zookeeper:2888:3888"
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok"
+    volumes:
+      - "./volumes/zookeeper/data:/var/lib/zookeeper/data"
+      - "./volumes/zookeeper/transactions:/var/lib/zookeeper/log"
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION:-latest}
+    container_name: kafka-broker-1
+    user: "0:0"
+    hostname: kafka-broker-1
+    restart: always
+    networks:
+      - my_network_01
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,LISTENER_LOCAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_COMPRESSION_TYPE: producer
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    volumes:
+      - "./volumes/kafka/broker-1:/var/lib/kafka/data"
+  kafka-manager:
+    image: hlebalbau/kafka-manager
+    restart: always
+    networks:
+      - my_network_01
+    ports:
+      - "9000:9000"
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+
+  init-kafka:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION:-latest}
+    entrypoint: [ "/bin/sh", "-c" ]
+    networks:
+      - my_network_01
+    depends_on:
+      - zookeeper
+      - kafka-broker-1
+      # - postgres
+    command: |
+      "
+      # block untill kafka is reachable
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+
+      # echo -e 'Deleting kafka topics'
+      #kafka-topics --bootstrap-server kafka-broker-1:9092 --topic create-sale-order --delete --if-exists
+
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic create-sale-order-request --replication-factor 1 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic create-sale-order-response --replication-factor 1 --partitions 3
+
+
+      # echo -e 'Sucessfully created the following topics:'
+      # kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+      "

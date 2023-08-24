@@ -11,7 +11,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.app.entity.Category;
-import com.app.enums.Status;
+import com.core.enums.Status;
 
 @Repository
 public interface CategoryRepository extends JpaSpecificationExecutor<Category>, CrudRepository<Category, Long>{

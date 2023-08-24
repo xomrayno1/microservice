@@ -6,4 +6,4 @@ COPY ${JAR_FILE} SaleService.jar
 
 ENTRYPOINT [ "java", "-jar", "/SaleService.jar" ]
 
-EXPOSE 9001
+EXPOSE 9006

@@ -3,8 +3,8 @@ package com.app.service;
 import java.util.List;
 
 import com.app.entity.StockTotal;
-import com.app.model.request.DecreaseStockRequest;
-import com.app.model.response.StockTotalResponse;
+import com.core.model.request.DecreaseStockRequest;
+import com.core.model.response.StockTotalResponse;
 
 public interface StockTotalService {
   

@@ -1,6 +1,6 @@
 package com.app.service.kafka.publisher;
 
-import com.app.model.request.DecreaseStockRequest;
+import com.core.model.request.DecreaseStockRequest;
 
 public interface SaleOrderKafkaPublisher {
 	

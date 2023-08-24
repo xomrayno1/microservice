@@ -2,6 +2,7 @@ package com.app.entity;
 
 import java.util.List;
 
+import com.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
